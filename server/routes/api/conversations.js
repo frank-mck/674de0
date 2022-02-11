@@ -18,7 +18,7 @@ router.get("/", async (req, res, next) => {
           user2Id: userId,
         },
       },
-      attributes: ["id"],
+      attributes: ["id", "user1NotSeen", "user2NotSeen"],
       order: [[Message, "createdAt"]],
       include: [
         { model: Message, order: ["createdAt", "DESC"] },
@@ -67,6 +67,10 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser.online = false;
       }
 
+      // set property for messages not seen by users per conversation
+      convoJSON.user1NotSeen = convo.user1NotSeen;
+      convoJSON.user2NotSeen = convo.user2NotSeen;
+         
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages[0].text;
       conversations[i] = convoJSON;

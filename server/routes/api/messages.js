@@ -14,8 +14,27 @@ router.post("/", async (req, res, next) => {
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
       const message = await Message.create({ senderId, text, conversationId });
-      return res.json({ message, sender });
+
+      let conversation = await Conversation.findConversation(
+        senderId,
+        recipientId
+      );
+
+      const { user1NotSeen, user2NotSeen, dataValues } = conversation;
+
+      if (senderId === dataValues?.user1Id) {
+        let inc = await conversation.increment({ user2NotSeen: + 1 });
+        let dec = await conversation.decrement('user1NotSeen', { by: user1NotSeen });
+        await Promise.all([inc, dec])
+      } else {
+        let inc = await conversation.increment({ user1NotSeen: + 1 });
+        let dec = await conversation.decrement('user2NotSeen', { by: user2NotSeen });
+        await Promise.all([inc, dec])
+      }
+      
+      return res.json({ message, sender, conversation });
     }
+
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
     let conversation = await Conversation.findConversation(
       senderId,
