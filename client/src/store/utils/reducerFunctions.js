@@ -78,3 +78,15 @@ export const addNewConvoToStore = (state, recipientId, message) => {
     }
   });
 };
+
+export const updateConvoNotifications = (state, data) => {
+  return state.map((convo) => {
+    if (data.id === convo.id) {
+      convo.user1NotSeen = data.user1NotSeen;
+      convo.user2NotSeen = data.user2NotSeen;
+      return convo;
+    } else {
+      return convo
+    } 
+  })
+}
