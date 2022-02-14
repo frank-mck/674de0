@@ -23,13 +23,13 @@ const useStyles = makeStyles((theme) => ({
 const Chat = (props) => {
   const classes = useStyles();
   const { conversation, postReadMessages, setActiveChat } = props;
-  const { otherUser, user1, user2 } = conversation;
+  const { otherUser, user1, user2, user1NotSeen, user2NotSeen } = conversation;
 
   const handleClick = async () => {
     await setActiveChat(otherUser.username);
-    if (user2 === null) {
+    if (user2 === null && user2NotSeen > 0) {
       await postReadMessages('user2NotSeen', conversation.id);
-    } else if (user1 === null) {
+    } else if (user1 === null && user1NotSeen > 0) {
       await postReadMessages('user1NotSeen', conversation.id);
     }
   };
