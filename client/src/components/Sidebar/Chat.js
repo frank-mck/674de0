@@ -6,6 +6,9 @@ import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
 import { postReadMessages } from "../../store/utils/thunkCreators";
 
+const USER1_NOT_SEEN = 'user1NotSeen';
+const USER2_NOT_SEEN = 'user2NotSeen';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     borderRadius: 8,
@@ -27,10 +30,12 @@ const Chat = (props) => {
 
   const handleClick = async () => {
     await setActiveChat(otherUser.username);
+
+    // When conversation is clicked - set logged user notifications to 0 if greater than 0
     if (user2 === null && user2NotSeen > 0) {
-      await postReadMessages('user2NotSeen', conversation.id);
+      await postReadMessages(USER2_NOT_SEEN, conversation.id);
     } else if (user1 === null && user1NotSeen > 0) {
-      await postReadMessages('user1NotSeen', conversation.id);
+      await postReadMessages(USER1_NOT_SEEN, conversation.id);
     }
   };
 
