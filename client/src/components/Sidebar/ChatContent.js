@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +25,12 @@ const ChatContent = (props) => {
   const classes = useStyles();
 
   const { conversation } = props;
-  const { latestMessageText, otherUser } = conversation;
+  const { latestMessageText, otherUser, user1, user1NotSeen, user2NotSeen } = conversation;
+
+  const getNotification = () => {
+    let value = user1 === null ? user1NotSeen : user2NotSeen;
+    return value ? value : null
+  }
 
   return (
     <Box className={classes.root}>
@@ -36,8 +42,15 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
+      <p>{getNotification()}</p>
     </Box>
   );
 };
 
-export default ChatContent;
+const mapStateToProps = (state) => {
+  return {
+    conversations: state.conversations
+  };
+};
+
+export default connect(mapStateToProps, null)(ChatContent);

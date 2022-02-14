@@ -86,7 +86,7 @@ router.post(`/:conversationId/:user/read-message`, async (req, res, next) => {
   try {
     const { conversationId, user } = req.params;
 
-    await Conversation.update({
+    let updateConvo = await Conversation.update({
       [user]: 0,
     },
     {
@@ -100,7 +100,8 @@ router.post(`/:conversationId/:user/read-message`, async (req, res, next) => {
         id: conversationId
       }
     });
- 
+    await Promise.all([updateConvo, conversation])
+
     res.json(conversation);
   } catch (error) {
     next(error)

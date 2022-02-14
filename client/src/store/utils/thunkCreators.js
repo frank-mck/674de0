@@ -121,8 +121,8 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 
 export const postReadMessages = (user, conversationId) => async (dispatch) => {
   try {
-    const { convo } = await axios.post(`/api/conversations/${conversationId}/${user}/read-message`);
-    dispatch(readMessages(convo))
+    const { data } = await axios.post(`/api/conversations/${conversationId}/${user}/read-message`);
+    dispatch(readMessages(data))
   } catch(error) {
     console.error(error);
   }
