@@ -20,18 +20,15 @@ router.post("/", async (req, res, next) => {
         recipientId
       );
 
-      const { user1NotSeen, user2NotSeen, dataValues } = conversation;
+      const { user1Id, user2Id } = conversation.dataValues;
 
-      if (senderId === dataValues?.user1Id) {
-        let inc = await conversation.increment({ user2NotSeen: + 1 });
-        let dec = await conversation.decrement('user1NotSeen', { by: user1NotSeen });
-        await Promise.all([inc, dec])
-      } else {
-        let inc = await conversation.increment({ user1NotSeen: + 1 });
-        let dec = await conversation.decrement('user2NotSeen', { by: user2NotSeen });
-        await Promise.all([inc, dec])
+      // Increase the notifications of the other user by 1
+      if (senderId === user1Id) {
+        await conversation.increment({ user2NotSeen: + 1 });
+      } else if (senderId === user2Id) {
+        await conversation.increment({ user1NotSeen: + 1 });
       }
-      
+
       return res.json({ message, sender, conversation });
     }
 
