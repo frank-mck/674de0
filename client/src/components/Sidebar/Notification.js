@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '50px',
     backgroundColor: '#3A8DFF',
     height: '22px',
-    minWidth: '24px',
+    minWidth: '22px',
     color: 'white',
     fontSize: '13px',
     fontWeight: '600',
@@ -25,7 +25,7 @@ const Notification = (props) => {
   const { conversation } = props;
   const { user1, user1NotSeen, user2NotSeen } = conversation;
 
-  const getNotification = user1 === null ? user1NotSeen : user2NotSeen;   
+  const getNotification = user1 === null ? user1NotSeen : user2NotSeen;  
 
   return (
     <div>
