@@ -32,7 +32,7 @@ const Input = (props) => {
     const reqBody = {
       text: event.target.text.value,
       recipientId: otherUser.id,
-      conversationId: conversationId,
+      conversationId,
       sender: conversationId ? null : user
     };
     await postMessage(reqBody);
@@ -55,7 +55,7 @@ const Input = (props) => {
   );
 };
 
-const mapDispatchToProps = () =>  (dispatch) => {
+const mapDispatchToProps = (dispatch) => {
   return {
     postMessage: (message) => {
       dispatch(postMessage(message));
