@@ -24,7 +24,11 @@ function LastSeen(props) {
   return (
     <div>
       {lastSeen?.id === messageId && (
-          <Avatar alt={otherUser.username} src={otherUser.photoUrl} className={classes.avatar}></Avatar>
+          <Avatar
+            alt={otherUser.username}
+            src={otherUser.photoUrl} 
+            className={classes.avatar}
+          ></Avatar>
         )} 
     </div>
   )
