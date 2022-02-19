@@ -44,7 +44,7 @@ router.post("/", async (req, res, next) => {
       senderId,
       text,
       conversationId: conversation.id,
-      read: [senderId]
+      read: [{userId: senderId}]
     });
     res.json({ message, sender });
   } catch (error) {
@@ -75,7 +75,7 @@ router.put("/read-message", async (req, res, next) => {
       return !read.some((user) => user.userId === userId);
     });
 
-    // Update message - add logged in users id to each message read array
+    // Update message: add the user id of the user logged in to each message read
     for(let i = 0; i < mesgs.length; i++) {
       let message = mesgs[i];
 
