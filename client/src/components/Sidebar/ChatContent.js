@@ -33,7 +33,7 @@ const ChatContent = (props) => {
   const { latestMessageText, otherUser, onlineUserId, messages } = conversation;
 
   const readLastMessage = () => {
-    return messages[messages.length - 1]?.read?.some(({userId}) => {
+    return messages[messages.length - 1]?.read.some(({userId}) => {
       return userId === onlineUserId;
     });
   }

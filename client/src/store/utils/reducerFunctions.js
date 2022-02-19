@@ -82,23 +82,24 @@ export const addNewConvoToStore = (state, recipientId, message, senderId) => {
   });
 };
 
-export const updateConvoNotifications = (state, message) => {
+export const updateConvoNotifications = (state, updatedMsg) => {
   return state.map((convo) => {
     
-    if (convo.conversationId === message.conversationId) {
+    // Find the conversation with our updated messages
+    if (convo.conversationId === updatedMsg.conversationId) {
       const convoCopy = { ...convo };
-      const messagesCopy = [ ...convoCopy.messages ]
+      const messagesCopy = [ ...convoCopy.messages ];
 
-      for (let i = 0; i < message.length; i++) {
-        const msgCopy = messagesCopy.filter(({id}) => id === message[i].id); 
-
+      // iterate through updated messages and asign old messages with new read values
+      for (let i = 0; i < updatedMsg.length; i++) {
+        const { read, id } = updatedMsg[i];
+        const msgCopy = messagesCopy.filter((msg) => msg.id === id); 
         if (msgCopy.length > 0) {
-          msgCopy[0].read = [ ...message[i].read ];
+          msgCopy[0].read = [ ...read ];
         }
       }
       
       convoCopy.messages = [...messagesCopy];
-
       return convoCopy;  
     } else {
       return convo;
