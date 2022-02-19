@@ -2,7 +2,11 @@ const { Op, Sequelize } = require("sequelize");
 const db = require("../db");
 const Message = require("./message");
 
-const Conversation = db.define("conversation", {});
+const Conversation = db.define("conversation", {
+  onlineUserId: {
+    type: Sequelize.INTEGER,
+  }
+});
 
 // find conversation given two user Ids
 

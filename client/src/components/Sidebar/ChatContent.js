@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Messages } from "../ActiveChat";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +33,7 @@ const ChatContent = (props) => {
   const { latestMessageText, otherUser, onlineUserId, messages } = conversation;
 
   const readLastMessage = () => {
-    return messages[messages.length - 1].read.some(({userId}) => {
+    return messages[messages.length - 1]?.read?.some(({userId}) => {
       return userId === onlineUserId;
     });
   }
@@ -54,12 +53,10 @@ const ChatContent = (props) => {
           <Typography className={classes.previewText}>
             {latestMessageText}
           </Typography>
-        )}
-              
+        )}              
       </Box>
     </Box>
   );
 };
-
 
 export default ChatContent;

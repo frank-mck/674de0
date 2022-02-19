@@ -7,8 +7,9 @@ const Notification = (props) => {
   const { messages, onlineUserId } = conversation; 
 
   const getNotifications = () => {
-    return messages.filter(({read, senderId}) => {
-      return !read.some((user) => {
+    console.log(messages)
+    return messages?.filter(({read, senderId}) => {
+      return !read?.some((user) => {
         return user.userId === onlineUserId
       })
         && senderId !== onlineUserId;
