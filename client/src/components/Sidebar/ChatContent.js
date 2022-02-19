@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Messages } from "../ActiveChat";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,13 +20,24 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
+  boldText: {
+    fontWeight: "900",
+    fontSize: 13,
+    letterSpacing: -0.17,
+  }
 }));
 
 const ChatContent = (props) => {
   const classes = useStyles();
 
   const { conversation } = props;
-  const { latestMessageText, otherUser } = conversation;
+  const { latestMessageText, otherUser, onlineUserId, messages } = conversation;
+
+  const readLastMessage = () => {
+    return messages[messages.length - 1].read.some(({userId}) => {
+      return userId === onlineUserId;
+    });
+  }
 
   return (
     <Box className={classes.root}>
@@ -33,9 +45,17 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
-          {latestMessageText}
-        </Typography>        
+        
+        {!readLastMessage() ? (
+          <Typography className={classes.boldText}>
+            {latestMessageText}
+          </Typography>          
+        ) : (
+          <Typography className={classes.previewText}>
+            {latestMessageText}
+          </Typography>
+        )}
+              
       </Box>
     </Box>
   );
