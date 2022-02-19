@@ -82,15 +82,5 @@ export const addNewConvoToStore = (state, recipientId, message) => {
 };
 
 export const updateConvoNotifications = (state, message) => {
-  return state.map((convo) => {
-    const convoCopy = { ...convo };
-    if (convo.otherUser.id) {
-      convoCopy.id = message.conversationId;
-      convoCopy.messages.push(message);
-      convoCopy.latestMessageText = message.text;
-      return convoCopy;
-    } else {
-      return convo;
-    }
-  });
+  return state
 }

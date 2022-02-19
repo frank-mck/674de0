@@ -30,7 +30,7 @@ const Chat = (props) => {
     // Get messages from the conversation we want
     let message = messages.filter(({conversationId}) => conversationId === conversation.id);
 
-    // Filter messages that i havent sent and the ones i havent read
+    // Filter messages that i havent sent and by the ones i havent read
     message = message.filter(({read, senderId}) => {
       return !read.some(user => {
         return user.userId === onlineUserId
@@ -44,7 +44,7 @@ const Chat = (props) => {
 
   const readMessage = async () => {
     const messages = getUnreadMessages();
-    
+
     if (messages) {
       await postReadMessage(onlineUserId, messages);
     }
@@ -53,7 +53,6 @@ const Chat = (props) => {
   const handleClick = async () => {
     await setActiveChat(otherUser.username);
 
-    // When conversation is clicked - set logged in users notifications to 0 if greater than 0
     readMessage();
   };
 
