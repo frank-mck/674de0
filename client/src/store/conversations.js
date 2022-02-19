@@ -34,10 +34,11 @@ export const setNewMessage = (message, sender, conversation) => {
   };
 };
 
-export const readMessages = (conversation) => {
+export const readMessages = (userId, messages) => {
   return {
     type: READ_MESSAGES,
-    conversation,
+    messages,
+    userId
   }
 }
 
@@ -101,7 +102,7 @@ const reducer = (state = [], action) => {
         action.payload.newMessage
       );
     case READ_MESSAGES:
-      return updateConvoNotifications(state, action.conversation);
+      return updateConvoNotifications(state, action.messages, action.userId);
     default:
       return state;
   }

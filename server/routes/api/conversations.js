@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { User, Conversation, Message } = require("../../db/models");
-const { Op, Sequelize } = require("sequelize");
+const { Op } = require("sequelize");
 const onlineUsers = require("../../onlineUsers");
 
 // get all conversations for a user, include latest message text for preview, and all messages
@@ -67,9 +67,7 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser.online = false;
       }
 
-      // set property for messages not seen by users per conversation
-      convoJSON.user1NotSeen = convo.user1NotSeen;
-      convoJSON.user2NotSeen = convo.user2NotSeen;
+      convoJSON.onlineUserId = userId
          
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages.reverse()[convoJSON.messages.length - 1].text;
@@ -81,31 +79,5 @@ router.get("/", async (req, res, next) => {
     next(error);
   }
 });
-
-router.post(`/:conversationId/:user/read-message`, async (req, res, next) => {
-  try {
-    const { conversationId, user } = req.params;
-
-    let updateConvo = await Conversation.update({
-      [user]: 0,
-    },
-    {
-      where: {
-        id: conversationId
-      }
-    });
-
-    let conversation = await Conversation.findOne({
-      where: {
-        id: conversationId
-      }
-    });
-    await Promise.all([updateConvo, conversation])
-
-    res.json(conversation);
-  } catch (error) {
-    next(error)
-  }
-})
 
 module.exports = router;

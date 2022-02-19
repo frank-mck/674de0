@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { Op } = require("sequelize");
 const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
 
@@ -13,21 +14,12 @@ router.post("/", async (req, res, next) => {
 
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
-      const message = await Message.create({ senderId, text, conversationId });
+      const message = await Message.create({ senderId, text, conversationId, read: [{userId: senderId}] });
 
       let conversation = await Conversation.findConversation(
         senderId,
         recipientId
       );
-
-      const { user1Id, user2Id } = conversation.dataValues;
-
-      // Increase the notifications of the other user by 1
-      if (senderId === user1Id) {
-        await conversation.increment({ user2NotSeen: + 1 });
-      } else if (senderId === user2Id) {
-        await conversation.increment({ user1NotSeen: + 1 });
-      }
 
       return res.json({ message, sender, conversation });
     }
@@ -52,11 +44,54 @@ router.post("/", async (req, res, next) => {
       senderId,
       text,
       conversationId: conversation.id,
+      read: [senderId]
     });
     res.json({ message, sender });
   } catch (error) {
     next(error);
   }
+});
+
+router.put("/read-message", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const { messages, userId } = req.body;
+    const conversationId = messages[0].conversationId;
+
+    // Find and read messages where the senderId does not equal mine 
+    let mesgs = await Message.findAll({
+      where: {
+        conversationId: conversationId, 
+        senderId: {
+          [Op.ne]: userId
+        }      
+      }
+    });
+  
+    // Filter the messages that I havent read
+    mesgs = mesgs.filter(({read}) => {
+      return !read.some((user) => user.userId === userId);
+    });
+
+    // Update message - add logged in users id to each message read array
+    for(let i = 0; i < mesgs.length; i++) {
+      let message = mesgs[i];
+
+      message = await message.update({
+          read: [...message.read, { userId: userId }]
+        },
+        { where: {
+          id: message.id,
+        }
+      }); 
+    } 
+    
+    return res.json(mesgs);
+  } catch(error) {
+    next(error);
+  }  
 });
 
 module.exports = router;

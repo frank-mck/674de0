@@ -4,11 +4,8 @@ import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
-import { postReadMessages } from "../../store/utils/thunkCreators";
+import { postReadMessage } from "../../store/utils/thunkCreators";
 import Notification from "./Notification";
-
-const USER1_NOT_SEEN = 'user1NotSeen';
-const USER2_NOT_SEEN = 'user2NotSeen';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,14 +23,30 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation, postReadMessages, setActiveChat } = props;
-  const { otherUser, user1, user2, user1NotSeen, user2NotSeen } = conversation;
+  const { conversation, postReadMessage, setActiveChat } = props;
+  const { otherUser, messages, onlineUserId } = conversation;
 
-  const readMessages = async () => {
-    if (user2 === null && user2NotSeen > 0) {
-      await postReadMessages(USER2_NOT_SEEN, conversation.id);
-    } else if (user1 === null && user1NotSeen > 0) {
-      await postReadMessages(USER1_NOT_SEEN, conversation.id);
+  const getUnreadMessages = () => {
+    // Get messages from the conversation we want
+    let message = messages.filter(({conversationId}) => conversationId === conversation.id);
+
+    // Filter messages that i havent sent and the ones i havent read
+    message = message.filter(({read, senderId}) => {
+      return !read.some(user => {
+        return user.userId === onlineUserId
+      }) 
+      
+      && senderId !== onlineUserId;
+    });
+
+    return message.length > 0 ? message : false;
+  }
+
+  const readMessage = async () => {
+    const messages = getUnreadMessages();
+    
+    if (messages) {
+      await postReadMessage(onlineUserId, messages);
     }
   }
 
@@ -41,7 +54,7 @@ const Chat = (props) => {
     await setActiveChat(otherUser.username);
 
     // When conversation is clicked - set logged in users notifications to 0 if greater than 0
-    readMessages();
+    readMessage();
   };
 
   return (
@@ -63,8 +76,8 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
-    postReadMessages: (user, conversationId) => {
-      dispatch(postReadMessages(user, conversationId));
+    postReadMessage: (userId, message) => {
+      dispatch(postReadMessage(userId, message));
     }
   };
 };
