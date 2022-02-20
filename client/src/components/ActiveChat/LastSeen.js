@@ -14,7 +14,7 @@ function LastSeen(props) {
   const classes = useStyles();
   const { messages, messageId, otherUser, userId } = props;
 
-  const lastSeen = messages.filter(mesg => {    
+  const lastSeen = messages.filter(mesg => {   
     return mesg.read.some(user => {
       return user.userId !== mesg.senderId
     }) && mesg.senderId === userId

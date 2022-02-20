@@ -85,7 +85,7 @@ export const addNewConvoToStore = (state, recipientId, message, senderId) => {
 export const updateConvoNotifications = (state, updatedMsg) => {
   return state.map((convo) => {
     
-    // Find the conversation with our updated messages
+    // Find the conversation with our updated messages from the server
     if (convo.conversationId === updatedMsg.conversationId) {
       const convoCopy = { ...convo };
       const messagesCopy = [ ...convoCopy.messages ];
@@ -93,13 +93,16 @@ export const updateConvoNotifications = (state, updatedMsg) => {
       // iterate through updated messages and asign old messages with new read values
       for (let i = 0; i < updatedMsg.length; i++) {
         const { read, id } = updatedMsg[i];
+
+        // Find the old messages we want to update
         const msgCopy = messagesCopy.filter((msg) => msg.id === id); 
+
         if (msgCopy.length > 0) {
           msgCopy[0].read = [ ...read ];
         }
-      }
-      
+      }      
       convoCopy.messages = [...messagesCopy];
+
       return convoCopy;  
     } else {
       return convo;

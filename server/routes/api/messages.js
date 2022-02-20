@@ -14,7 +14,9 @@ router.post("/", async (req, res, next) => {
 
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
-      const message = await Message.create({ senderId, text, conversationId, read: [{userId: senderId}] });
+      const message = await Message.create({
+         senderId, text, conversationId, read: [{userId: senderId}]
+      });
 
       let conversation = await Conversation.findConversation(
         senderId,
@@ -54,7 +56,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/read-message", async (req, res, next) => {
+router.put("/conversation/:conversationId/user/:userId/read-message", async (req, res, next) => {
   try {
     if (!req.user) {
       return res.sendStatus(401);
