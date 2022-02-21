@@ -73,6 +73,11 @@ router.put("/conversation/:conversationId/user/:userId/read-message", async (req
         }      
       }
     });
+
+    // Send forbidden error message if user do not have access to this conversation
+    if (mesgs.length === 0) {
+      return res.sendStatus(403);
+    }
   
     // Filter the messages that I havent read
     mesgs = mesgs.filter(({read}) => {

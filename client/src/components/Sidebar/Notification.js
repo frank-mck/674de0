@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Badge } from "@material-ui/core";
+import { Badge, Box } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   badge: {
@@ -24,9 +24,9 @@ const Notification = (props) => {
   }
 
   return (
-    <div>
+    <Box>
       <Badge className={classes.badge} badgeContent={getNotifications()} color="primary" />
-    </div>    
+    </Box>    
   )
 }
 
