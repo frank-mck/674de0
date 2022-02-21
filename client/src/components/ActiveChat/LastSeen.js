@@ -1,6 +1,5 @@
 import { Avatar, makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux';
 
 const useStyles = makeStyles(() => ({
   avatar: {
@@ -11,7 +10,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function LastSeen(props) {
+const LastSeen = (props) => {
   const classes = useStyles();
   const [lastSeenMesg, setLastSeenMesg] = useState(null)
   const { messages, messageId, otherUser, userId } = props;
@@ -24,7 +23,7 @@ function LastSeen(props) {
 
   useEffect(() => {
     setLastSeenMesg(lastSeen);
-  }, [setLastSeenMesg, lastSeen, messages])
+  }, [lastSeenMesg, lastSeen, messages])
 
   return (
     <div>
@@ -39,10 +38,4 @@ function LastSeen(props) {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    conversations: state.conversations
-  };
-};
-
-export default connect(mapStateToProps, null)(LastSeen);
+export default LastSeen;
