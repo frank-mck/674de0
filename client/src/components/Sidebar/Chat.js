@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation, postReadMessage, setActiveChat } = props;
+  const { conversation, postReadMessage, setActiveChat, activeConversation } = props;
   const { otherUser, messages, onlineUserId } = conversation;
 
   const getUnreadMessages = () => {
@@ -50,10 +50,14 @@ const Chat = (props) => {
     }
   }
 
+  useEffect(() => {   
+    if (activeConversation) {
+      return readMessage(); 
+    }      
+  })
+
   const handleClick = async () => {
     await setActiveChat(otherUser.username);
-
-    readMessage();
   };
 
   return (
@@ -70,6 +74,12 @@ const Chat = (props) => {
   );
 };
 
+const mapStateToProps = (state) => {
+  return {
+    activeConversation: state.activeConversation
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     setActiveChat: (id) => {
@@ -81,4 +91,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Chat);
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);

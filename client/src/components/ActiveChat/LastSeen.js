@@ -1,5 +1,5 @@
 import { Avatar, makeStyles } from '@material-ui/core';
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const useStyles = makeStyles(() => ({
   avatar: {
@@ -20,6 +20,9 @@ function LastSeen(props) {
     }) && mesg.senderId === userId
   }).reverse()[0];
 
+  useEffect(() => {
+    return lastSeen;
+  })
 
   return (
     <div>
