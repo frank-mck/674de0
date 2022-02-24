@@ -67,16 +67,63 @@ export const addSearchedUsersToStore = (state, users) => {
   return newState;
 };
 
-export const addNewConvoToStore = (state, recipientId, message) => {
+export const addNewConvoToStore = (state, recipientId, message, senderId) => {
   return state.map((convo) => {
     const convoCopy = { ...convo };
     if (convo.otherUser.id === recipientId) {
       convoCopy.id = message.conversationId;
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
+      convoCopy.onlineUserId = senderId;
       return convoCopy;
     } else {
       return convo;
     }
   });
 };
+
+export const updateConvoNotifications = (state, updatedMsg) => {
+  return state.map((convo) => {
+    
+    // Find the conversation with our updated messages from the server
+    if (convo.conversationId === updatedMsg.conversationId) {
+      const convoCopy = { ...convo };
+      const messagesCopy = [ ...convoCopy.messages ];
+
+      // iterate through updated messages and asign old messages with new read values
+      for (let i = 0; i < updatedMsg.length; i++) {
+        const { read, id } = updatedMsg[i];
+
+        // Find the old messages we want to update
+        const msgCopy = messagesCopy.filter((msg) => msg.id === id); 
+
+        if (msgCopy.length > 0) {
+          msgCopy[0].read = [ ...read ];
+        }
+      }      
+      convoCopy.messages = [...messagesCopy];
+
+      return convoCopy;  
+    } else {
+      return convo;
+    }       
+  });
+}
+
+// export const updateLastSeenMessage = (state, message) => {
+//   return state.map((convo) => {
+//     if (convo.id === message.conversationId) {
+//       const convoCopy = { ...convo };
+//       const { messages } = convoCopy;
+
+//       const messageCopy = messages.find((mesg) => {
+//         return mesg.id === message.id
+//       });
+
+//       messageCopy.lastSeen = true;
+//       return convoCopy;
+//     } else {
+//       return convo;
+//     }
+//   })
+// }
