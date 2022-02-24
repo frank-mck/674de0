@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -26,35 +26,21 @@ const Chat = (props) => {
   const { conversation, postReadMessage, setActiveChat, activeConversation } = props;
   const { otherUser, messages, onlineUserId } = conversation;
 
-  const getUnreadMessages = () => {
-    // Get messages from the conversation we want
-    let message = messages.filter(({conversationId}) => conversationId === conversation.id);
-
-    // Filter messages that i havent sent and by the ones i havent read
-    message = message.filter(({read, senderId}) => {
-      return !read.some(user => {
-        return user.userId === onlineUserId
-      }) 
-      
-      && senderId !== onlineUserId;
-    });
-
-    return message.length > 0 ? message : false;
-  }
-
-  const readMessage = async () => {
-    const messages = getUnreadMessages();
-
-    if (messages) {
-      await postReadMessage(onlineUserId, messages);
-    }
-  }
+  const computeUnreadMessages = useMemo(() => {
+    return getUnreadMessages(messages, conversation, onlineUserId);
+  }, [messages, conversation, onlineUserId])
 
   useEffect(() => {   
-    if (activeConversation) {
-      return readMessage(); 
+    if (activeConversation === otherUser.username
+       && computeUnreadMessages.length > 0) {
+      postReadMessage(onlineUserId, computeUnreadMessages);
     }      
-  })
+  }, [computeUnreadMessages,
+      activeConversation,
+      onlineUserId,
+      otherUser.username,
+      postReadMessage
+    ]);
 
   const handleClick = async () => {
     await setActiveChat(otherUser.username);
@@ -74,6 +60,22 @@ const Chat = (props) => {
   );
 };
 
+const getUnreadMessages = (messages, conversation, onlineUserId) => {
+  let unreadMessages = messages.filter(({conversationId}) => {
+    return conversationId === conversation.id
+  });
+
+  // Filter messages that i havent sent and by the ones i havent read
+  unreadMessages = unreadMessages.filter(({read, senderId}) => {
+    return !read.some(user => {
+      return user.userId === onlineUserId
+    }) 
+    
+    && senderId !== onlineUserId;
+  });
+  return unreadMessages;
+}
+
 const mapStateToProps = (state) => {
   return {
     activeConversation: state.activeConversation
@@ -85,8 +87,8 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
-    postReadMessage: (userId, message) => {
-      dispatch(postReadMessage(userId, message));
+    postReadMessage: (userId, messages) => {
+      dispatch(postReadMessage(userId, messages));
     }
   };
 };

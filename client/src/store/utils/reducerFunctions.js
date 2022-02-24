@@ -109,3 +109,21 @@ export const updateConvoNotifications = (state, updatedMsg) => {
     }       
   });
 }
+
+// export const updateLastSeenMessage = (state, message) => {
+//   return state.map((convo) => {
+//     if (convo.id === message.conversationId) {
+//       const convoCopy = { ...convo };
+//       const { messages } = convoCopy;
+
+//       const messageCopy = messages.find((mesg) => {
+//         return mesg.id === message.id
+//       });
+
+//       messageCopy.lastSeen = true;
+//       return convoCopy;
+//     } else {
+//       return convo;
+//     }
+//   })
+// }
