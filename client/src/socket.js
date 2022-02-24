@@ -20,11 +20,9 @@ socket.on("connect", () => {
     store.dispatch(removeOfflineUser(id));
   });
   socket.on("new-message", (data) => {
-    console.log(data, 'new')
     store.dispatch(setNewMessage(data.message, data.sender, data.conversation));
   });
   socket.on("read-messages", (userId, messages) => {
-    console.log(messages, 'read');
     store.dispatch(readMessages(userId, messages));
   });
 });

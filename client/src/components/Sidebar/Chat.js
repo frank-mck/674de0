@@ -39,7 +39,8 @@ const Chat = (props) => {
       activeConversation,
       onlineUserId,
       otherUser.username,
-      postReadMessage
+      postReadMessage,
+      messages
     ]);
 
   const handleClick = async () => {
