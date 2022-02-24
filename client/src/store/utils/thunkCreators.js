@@ -119,15 +119,38 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-export const postReadMessage = (userId, message) => async (dispatch) => {
-  try {
-    const { data } = await axios.put(
-      `/api/messages/conversation/${message[0].conversationId}/user/${userId}/read-message`, {
-      messages: message, userId: userId
-    });
+const saveReadMessage = async (messages, userId) => {
+  const { data } = await axios.put(
+    `/api/messages/conversation/${messages[0].conversationId}/user/${userId}/read-message`, {
+    messages: messages, userId: userId
+  });
+  return data;
+}
 
-    dispatch(readMessages(userId, data))
+const readMessage = (userId, messages) => {
+  socket.emit("read-messages", userId, messages);
+}
+
+export const postReadMessage = (userId, messages) => async (dispatch) => {
+  try {
+    const data = await saveReadMessage(messages, userId);
+
+    dispatch(readMessages(userId, data));
+
+    readMessage(userId, data);
   } catch(error) {
     console.error(error);
   }
 }
+
+// export const postLastSeenMessage = (message) => async (dispatch) => {
+//   try {
+//     const { data } = await axios.post(`/api/messages/conversation/${message.conversationId}/set-last-seen-message`, {
+//       message: message
+//     });
+
+//     dispatch(setLastSeenMessage(data));
+//   } catch(error) {
+//     console.log(error);
+//   }
+// }

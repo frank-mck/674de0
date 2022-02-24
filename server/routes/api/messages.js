@@ -73,6 +73,11 @@ router.put("/conversation/:conversationId/user/:userId/read-message", async (req
         }      
       }
     });
+
+    // Send forbidden error message if user do not have access to this conversation
+    if (mesgs.length === 0) {
+      return res.sendStatus(403);
+    }
   
     // Filter the messages that I havent read
     mesgs = mesgs.filter(({read}) => {
@@ -97,5 +102,32 @@ router.put("/conversation/:conversationId/user/:userId/read-message", async (req
     next(error);
   }  
 });
+
+// router.post('/conversation/:conversationId/set-last-seen-message', async (req, res, next) => {
+//   try {
+//     if (!req.user) {
+//       return sendStatus(401);
+//     }
+
+//     const message = req.body.message;
+//     const convoId = message.conversationId;
+
+//     const mesg = await Message.findOne({
+//       where: {
+//         conversationId: convoId,
+//         id : message.id
+//       }
+//     })
+
+//     const messageJSON = mesg.toJSON();
+//         console.log(message, messageJSON)
+
+//     messageJSON.lastSeen = true;
+
+//     return res.json(messageJSON)
+//   } catch(error) {
+//     next(error);
+//   }
+// })
 
 module.exports = router;

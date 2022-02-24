@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography } from "@material-ui/core";
 import LastSeen from "./LastSeen";
@@ -30,22 +30,34 @@ const useStyles = makeStyles(() => ({
 
 const SenderBubble = (props) => {
   const classes = useStyles();
-  const { time, text, messageId, otherUser, userId, messages} = props;
-  
+  const { time, text, otherUser, message, messages, userId } = props;
+
+  const computeLastSeenMessage = useMemo(() => {
+    return lastSeen(messages, userId);
+  }, [messages, userId]);  
+
   return (
     <Box className={classes.root}>
       <Typography className={classes.date}>{time}</Typography>
       <Box className={classes.bubble}>
         <Typography className={classes.text}>{text}</Typography>
       </Box>
-      <LastSeen
-        messages={messages}
-        userId={userId}
-        messageId={messageId}
-        otherUser={otherUser}
-      />
+      {computeLastSeenMessage?.id === message.id && (
+        <LastSeen 
+          key={Math.floor(Math.random() * userId)}
+          otherUser={otherUser}
+        />
+      )} 
     </Box>
   );
 };
+
+const lastSeen = (messages, userId) => {
+  return messages.filter(mesg => {   
+    return mesg.read.some(user => {
+      return user.userId !== mesg.senderId
+    }) && mesg.senderId === userId
+  }).reverse()[0];
+}
 
 export default SenderBubble;
