@@ -1,5 +1,5 @@
 const db = require("./db");
-const { User, GroupConversation } = require("./models");
+const { User } = require("./models");
 const Conversation = require("./models/conversation");
 const Message = require("./models/message");
 
@@ -7,10 +7,7 @@ async function seed() {
   await db.sync({ force: true });
   console.log("db synced!");
 
-  const santaigoConvo = await GroupConversation.create({});
-
   const thomas = await User.create({
-    conversationId: santaigoConvo.conversationId,
     username: "thomas",
     email: "thomas@email.com",
     password: "123456",
@@ -19,7 +16,6 @@ async function seed() {
   });
 
   const santiago = await User.create({
-    conversationId: santaigoConvo.conversationId,
     username: "santiago",
     email: "santiago@email.com",
     password: "123456",
@@ -27,7 +23,10 @@ async function seed() {
       "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914466/messenger/775db5e79c5294846949f1f55059b53317f51e30_s3back.png",
   });
 
-  
+  const santaigoConvo = await Conversation.create({
+    user1Id: thomas.id,
+    user2Id: santiago.id,
+  });
 
   await Message.create({
     conversationId: santaigoConvo.id,
@@ -56,8 +55,8 @@ async function seed() {
       "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914468/messenger/8bc2e13b8ab74765fd57f0880f318eed1c3fb001_fownwt.png",
   });
   const chiumboConvo = await Conversation.create({
-    userId: chiumbo.id,
-    userId: thomas.id,
+    user1Id: chiumbo.id,
+    user2Id: thomas.id,
   });
   await Message.create({
     conversationId: chiumboConvo.id,
@@ -74,8 +73,8 @@ async function seed() {
       "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914466/messenger/6c4faa7d65bc24221c3d369a8889928158daede4_vk5tyg.png",
   });
   const hualingConvo = await Conversation.create({
-    userId: hualing.id,
-    userId: thomas.id,
+    user2Id: hualing.id,
+    user1Id: thomas.id,
   });
 
   for (let i = 0; i < 11; i++) {
