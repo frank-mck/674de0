@@ -5,14 +5,14 @@ const Message = require("./message");
 // associations
 
 User.belongsToMany(Conversation, {
-  through: 'group-conversations',
+  through: 'groupConversations',
   foreignKey: 'userId',
  
 });
 
 Conversation.belongsToMany(User, {
   foreignKey: 'conversationId', 
-  through: 'group-conversations',
+  through: 'groupConversations',
 });
 
 Message.belongsTo(Conversation);
